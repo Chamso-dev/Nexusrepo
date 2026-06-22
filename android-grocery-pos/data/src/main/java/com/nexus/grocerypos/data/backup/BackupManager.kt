@@ -46,14 +46,25 @@ class BackupManager @Inject constructor(
         val sourceFile = File(sourcePath)
         require(sourceFile.exists()) { "Backup file not found" }
 
+        val dbPath = context.getDatabasePath(AppDatabase.DATABASE_NAME)
+        val dbDir = requireNotNull(dbPath.parentFile) { "Database directory unavailable" }
+        val allowedNames = setOf(dbPath.name, "${dbPath.name}-wal", "${dbPath.name}-shm")
+
         database.close()
-        val dbDir = context.getDatabasePath(AppDatabase.DATABASE_NAME).parentFile
 
         ZipInputStream(sourceFile.inputStream()).use { zip ->
-            var entry = zip.nextEntry
+            var entry: ZipEntry? = zip.nextEntry
             while (entry != null) {
-                val targetFile = File(dbDir, entry.name)
+                val name = File(entry.name).name
+                require(name in allowedNames) { "Unexpected entry in backup: ${entry.name}" }
+
+                // Guard against Zip Slip: the resolved target must stay inside dbDir.
+                val targetFile = File(dbDir, name)
+                require(targetFile.canonicalPath.startsWith(dbDir.canonicalPath + File.separator)) {
+                    "Invalid backup entry path: ${entry.name}"
+                }
                 targetFile.outputStream().use { zip.copyTo(it) }
+                zip.closeEntry()
                 entry = zip.nextEntry
             }
         }

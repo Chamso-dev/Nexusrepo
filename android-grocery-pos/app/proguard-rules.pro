@@ -1,0 +1,3 @@
+-keepattributes *Annotation*
+-keep class com.nexus.grocerypos.data.local.entity.** { *; }
+-keep class com.nexus.grocerypos.domain.model.** { *; }

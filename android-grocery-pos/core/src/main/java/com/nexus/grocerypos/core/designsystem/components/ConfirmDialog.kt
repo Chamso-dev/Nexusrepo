@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -33,7 +34,7 @@ fun ConfirmDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = message, style = MaterialTheme.typography.bodyMedium, color = colors.textSecondary)
                 Spacer(modifier = Modifier.height(20.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp, Arrangement.End)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)) {
                     GlassButton(text = dismissLabel, onClick = onDismiss, style = GlassButtonStyle.SECONDARY)
                     GlassButton(
                         text = confirmLabel,

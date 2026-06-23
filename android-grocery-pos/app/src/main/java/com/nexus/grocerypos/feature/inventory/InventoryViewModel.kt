@@ -75,7 +75,7 @@ class InventoryViewModel @Inject constructor(
                     history = hist,
                     searchResults = results
                 )
-            }.collect()
+            }.collect { }
         }
     }
 

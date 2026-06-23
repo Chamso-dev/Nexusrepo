@@ -21,15 +21,43 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+        getByName("debug") {
+            // Checked-in debug-only key (not a secret) so every CI build shares the same
+            // signature; lets a freshly built APK update over a previously installed one.
+            storeFile = rootProject.file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+        create("release") {
+            val storePath = System.getenv("RELEASE_STORE_FILE") ?: providers.gradleProperty("RELEASE_STORE_FILE").orNull
+            if (storePath != null) {
+                storeFile = rootProject.file(storePath)
+                storePassword = System.getenv("RELEASE_STORE_PASSWORD") ?: providers.gradleProperty("RELEASE_STORE_PASSWORD").orNull
+                keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: providers.gradleProperty("RELEASE_KEY_ALIAS").orNull
+                keyPassword = System.getenv("RELEASE_KEY_PASSWORD") ?: providers.gradleProperty("RELEASE_KEY_PASSWORD").orNull
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Falls back to the debug key when no release keystore secrets are supplied so
+            // `assembleRelease` keeps working; set RELEASE_STORE_* to sign with a real key.
+            signingConfig = if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
         debug {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

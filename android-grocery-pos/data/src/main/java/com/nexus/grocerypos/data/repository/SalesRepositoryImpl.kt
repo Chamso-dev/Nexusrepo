@@ -62,8 +62,9 @@ class SalesRepositoryImpl @Inject constructor(
             val storeCreditUsed = sale.payments
                 .filter { it.method == PaymentMethod.STORE_CREDIT }
                 .sumOf { it.amount }
-            if (storeCreditUsed > 0 && sale.customerId != null) {
-                customerRepository.adjustBalance(sale.customerId, -storeCreditUsed)
+            val customerId = sale.customerId
+            if (storeCreditUsed > 0 && customerId != null) {
+                customerRepository.adjustBalance(customerId, -storeCreditUsed)
             }
 
             saleId

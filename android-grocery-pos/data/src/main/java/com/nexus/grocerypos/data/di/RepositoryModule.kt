@@ -8,7 +8,9 @@ import com.nexus.grocerypos.data.repository.ReportRepositoryImpl
 import com.nexus.grocerypos.data.repository.SalesRepositoryImpl
 import com.nexus.grocerypos.data.repository.SupplierRepositoryImpl
 import com.nexus.grocerypos.data.repository.UserRepositoryImpl
+import com.nexus.grocerypos.data.printing.BluetoothReceiptPrinter
 import com.nexus.grocerypos.data.settings.SettingsRepositoryImpl
+import com.nexus.grocerypos.domain.printing.ReceiptPrinter
 import com.nexus.grocerypos.domain.repository.CustomerRepository
 import com.nexus.grocerypos.domain.repository.InventoryRepository
 import com.nexus.grocerypos.domain.repository.ProductRepository
@@ -39,4 +41,5 @@ abstract class RepositoryModule {
     @Binds @Singleton abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
     @Binds @Singleton abstract fun bindReportRepository(impl: ReportRepositoryImpl): ReportRepository
     @Binds @Singleton abstract fun bindDispatcherProvider(impl: DefaultDispatcherProvider): DispatcherProvider
+    @Binds @Singleton abstract fun bindReceiptPrinter(impl: BluetoothReceiptPrinter): ReceiptPrinter
 }
